@@ -25,8 +25,6 @@ const DeliveryConfirmation: React.FC<DeliveryConfirmationProps> = ({
   const [submittedRating, setSubmittedRating] = useState<number>(0);
   const submitGuard = useRef(false);
 
-  if (status !== 'delivered') return null;
-
   const handleConfirmReceipt = () => setView('form');
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
@@ -62,6 +60,8 @@ const DeliveryConfirmation: React.FC<DeliveryConfirmationProps> = ({
   };
 
   const displayRating = hovered || rating;
+
+  if (status !== 'delivered') return null;
 
   return (
     <div
