@@ -1,3 +1,4 @@
+import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -9,6 +10,30 @@ const defaultProps = {
 };
 
 describe('DeliveryConfirmation', () => {
+  it('full user flow: open form, pick rating, add feedback, submit and show success', async () => {
+    const user = userEvent.setup();
+    const onConfirm = vi.fn().mockResolvedValue(undefined);
+
+    render(<DeliveryConfirmation shipmentId="SHP-1" status="delivered" onConfirm={onConfirm} />);
+
+    expect(screen.getByRole('button', { name: /Confirm Receipt/i })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /Confirm Receipt/i }));
+
+    const stars = screen.getAllByRole('radio');
+    await user.click(stars[3]);
+
+    const textarea = screen.getByPlaceholderText(/Share any comments about your delivery/i);
+    await user.type(textarea, 'Great delivery');
+
+    await user.click(screen.getByRole('button', { name: /Submit Confirmation/i }));
+
+    await screen.findByText(/Thank you for confirming!/i);
+
+    expect(onConfirm).toHaveBeenCalledTimes(1);
+    expect(onConfirm).toHaveBeenCalledWith('SHP-1', 4, 'Great delivery');
+  });
+
   describe('render conditions', () => {
     it('renders when status is delivered', () => {
       render(<DeliveryConfirmation {...defaultProps} />);
@@ -63,19 +88,19 @@ describe('DeliveryConfirmation', () => {
 
     it('marks selected star as checked', async () => {
       const stars = screen.getAllByRole('radio');
-      await userEvent.click(stars[2]); // 3 stars
+      await userEvent.click(stars[2]);
       expect(stars[2]).toHaveAttribute('aria-checked', 'true');
     });
 
     it('shows label for selected rating', async () => {
       const stars = screen.getAllByRole('radio');
-      await userEvent.click(stars[4]); // 5 stars = Excellent
+      await userEvent.click(stars[4]);
       expect(screen.getByText('Excellent')).toBeInTheDocument();
     });
 
     it('shows hover preview on mouse enter', () => {
       const stars = screen.getAllByRole('radio');
-      fireEvent.mouseEnter(stars[1]); // hover 2nd star
+      fireEvent.mouseEnter(stars[1]);
       expect(screen.getByText('Fair')).toBeInTheDocument();
     });
 
@@ -119,7 +144,7 @@ describe('DeliveryConfirmation', () => {
     it('does not submit without a rating', async () => {
       const onConfirm = vi.fn();
       render(<DeliveryConfirmation {...defaultProps} onConfirm={onConfirm} />);
-      await userEvent.click(screen.getAllByRole('button', { name: /confirm receipt/i })[0]);
+      await userEvent.click(screen.getByRole('button', { name: /confirm receipt/i }));
       fireEvent.submit(screen.getByRole('form', { hidden: true }) ?? document.querySelector('form')!);
       expect(onConfirm).not.toHaveBeenCalled();
     });
@@ -129,7 +154,7 @@ describe('DeliveryConfirmation', () => {
       render(<DeliveryConfirmation {...defaultProps} onConfirm={onConfirm} />);
       await userEvent.click(screen.getByRole('button', { name: /confirm receipt/i }));
       const stars = screen.getAllByRole('radio');
-      await userEvent.click(stars[4]); // 5 stars
+      await userEvent.click(stars[4]);
       await userEvent.type(screen.getByLabelText(/feedback/i), 'Great service');
       await userEvent.click(screen.getByRole('button', { name: /submit confirmation/i }));
       await waitFor(() => expect(onConfirm).toHaveBeenCalledWith('#SHP-001', 5, 'Great service'));
@@ -140,7 +165,7 @@ describe('DeliveryConfirmation', () => {
       render(<DeliveryConfirmation {...defaultProps} onConfirm={onConfirm} />);
       await userEvent.click(screen.getByRole('button', { name: /confirm receipt/i }));
       const stars = screen.getAllByRole('radio');
-      await userEvent.click(stars[2]); // 3 stars
+      await userEvent.click(stars[2]);
       await userEvent.click(screen.getByRole('button', { name: /submit confirmation/i }));
       await waitFor(() => expect(onConfirm).toHaveBeenCalledWith('#SHP-001', 3, ''));
     });
@@ -177,7 +202,7 @@ describe('DeliveryConfirmation', () => {
       render(<DeliveryConfirmation {...defaultProps} onConfirm={onConfirm} />);
       await userEvent.click(screen.getByRole('button', { name: /confirm receipt/i }));
       const stars = screen.getAllByRole('radio');
-      await userEvent.click(stars[3]); // 4 stars
+      await userEvent.click(stars[3]);
       await userEvent.click(screen.getByRole('button', { name: /submit confirmation/i }));
       await waitFor(() => expect(screen.getByText(/thank you for confirming/i)).toBeInTheDocument());
     });
@@ -187,7 +212,7 @@ describe('DeliveryConfirmation', () => {
       render(<DeliveryConfirmation {...defaultProps} onConfirm={onConfirm} />);
       await userEvent.click(screen.getByRole('button', { name: /confirm receipt/i }));
       const stars = screen.getAllByRole('radio');
-      await userEvent.click(stars[3]); // 4 stars = Very Good
+      await userEvent.click(stars[3]);
       await userEvent.click(screen.getByRole('button', { name: /submit confirmation/i }));
       await waitFor(() => expect(screen.getByText('Very Good')).toBeInTheDocument());
     });
