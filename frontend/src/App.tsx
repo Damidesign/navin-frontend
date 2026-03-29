@@ -15,6 +15,7 @@ import CreateShipment from './pages/dashboard/Company/CreateShipment/CreateShipm
 import PaymentHistory from './pages/Payments/PaymentHistory/PaymentHistory';
 import NotificationsPage from './pages/Notifications/NotificationsPage';
 import ShipmentDetail from './pages/ShipmentDetail/ShipmentDetail';
+import CustomerProfile from './pages/dashboard/Customer/Profile/CustomerProfile';
 import DashboardLayout from './components/layout/DashboardLayout';
 import ProtectedRoute from './components/auth/ProtectedRoute/ProtectedRoute';
 import './App.css';
@@ -89,6 +90,10 @@ const router = createBrowserRouter([
           {
             path: '/dashboard/notifications',
             element: <NotificationsPage />,
+          },
+          {
+            path: '/dashboard/profile',
+            element: <CustomerProfile />,
           },
         ],
       },
