@@ -5,6 +5,7 @@ import ShipmentMap from "./ShipmentMap/ShipmentMap";
 import DeliveryProofUpload from "./DeliveryProofUpload/DeliveryProofUpload";
 import DeliveryConfirmation from "../../components/shipment/DeliveryConfirmation/DeliveryConfirmation";
 import PaymentStatus, { PaymentData } from "./PaymentStatus/PaymentStatus";
+import SensorDataCards, { SensorData } from "./SensorDataCards/SensorDataCards";
 
 const ShipmentDetail: React.FC = () => {
   const shipmentHeaderData = {
@@ -27,6 +28,29 @@ const ShipmentDetail: React.FC = () => {
     payerAddress: "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI",
     payeeAddress: "GCFXHS4GXL6BVUCXBWXGTITROWLVYXQKQLF4YH5O5JT3YZXCYPAFBJZB",
     transactionHash: "a]b c9d4e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9",
+  };
+
+  // Mock sensor data - set to null to show empty state
+  const mockSensorData: SensorData | null = {
+    temperature: {
+      value: 22,
+      unit: "°C",
+      lastUpdated: "2026-02-23 09:15 AM EST",
+    },
+    humidity: {
+      value: 45,
+      unit: "%",
+      lastUpdated: "2026-02-23 09:15 AM EST",
+    },
+    gps: {
+      latitude: 42.3601,
+      longitude: -71.0589,
+      lastUpdated: "2026-02-23 09:10 AM EST",
+    },
+    shockTilt: {
+      eventCount: 2,
+      lastUpdated: "2026-02-22 03:45 PM EST",
+    },
   };
 
   const mockMilestones: MilestoneDetail[] = [
@@ -74,6 +98,7 @@ const ShipmentDetail: React.FC = () => {
           <MilestoneTimeline milestones={mockMilestones} />
         </div>
 
+        <SensorDataCards sensorData={mockSensorData} />
         <PaymentStatus payment={mockPaymentData} />
         <DeliveryProofUpload />
         <DeliveryConfirmation
