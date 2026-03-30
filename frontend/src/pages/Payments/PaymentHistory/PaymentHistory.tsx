@@ -8,6 +8,7 @@ import {
     ArrowUpDown,
     X,
 } from "lucide-react";
+import PaymentSummaryCards from "../PaymentSummaryCards";
 
 type PaymentStatus = "Pending" | "Escrowed" | "Released" | "Failed";
 
@@ -393,6 +394,9 @@ const PaymentHistory: React.FC = () => {
                     </span>
                 </div>
             </div>
+
+            {/* Payment Summary Cards */}
+            <PaymentSummaryCards />
 
             {/* Table */}
             <div className={`${tableContainerClass} md:overflow-x-auto`}>
